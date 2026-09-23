@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   defaultConfig,
   getActiveVariant,
-  getMissionFailThreshold,
+  getRequiredFailCards,
+  getTeamSize,
 } from './engine/config'
 import { infer } from './engine/infer'
 import type {
@@ -102,6 +103,7 @@ interface ProposalFormProps {
   players: Player[]
   round: number
   proposalNumber: number
+  teamSize: number
   onPropose: (leaderIndex: number, teamPlayerIndices: number[]) => void
 }
 
@@ -109,6 +111,7 @@ function ProposalForm({
   players,
   round,
   proposalNumber,
+  teamSize,
   onPropose,
 }: ProposalFormProps) {
   const [leaderIndex, setLeaderIndex] = useState(players[0]?.index ?? 0)
@@ -119,8 +122,10 @@ function ProposalForm({
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     )
 
+  const canConfirm = team.length === teamSize
+
   const propose = () => {
-    if (team.length > 0) {
+    if (canConfirm) {
       onPropose(leaderIndex, team)
     }
   }
@@ -129,7 +134,8 @@ function ProposalForm({
     <section className="game-board" style={{ marginTop: '1rem' }}>
       <div className="game-board__section">
         <h3 className="game-board__section-title">
-          Round {round} · Proposal {proposalNumber} — propose a team
+          Round {round} · Proposal {proposalNumber} — select {teamSize}{' '}
+          member{teamSize === 1 ? '' : 's'}
         </h3>
         <div className="settings-panel__row">
           <label
@@ -170,9 +176,9 @@ function ProposalForm({
             className="setup-screen__start"
             type="button"
             onClick={propose}
-            disabled={team.length === 0}
+            disabled={!canConfirm}
           >
-            Record proposal ({team.length} on team)
+            Record proposal ({team.length}/{teamSize} on team)
           </button>
         </div>
       </div>
@@ -241,7 +247,7 @@ interface ResultFormProps {
   players: Player[]
   round: number
   teamPlayerIndices: number[]
-  missionFailThreshold: number
+  requiredFailCount: number
   onResult: (failCount: number) => void
 }
 
@@ -249,11 +255,11 @@ function ResultForm({
   players,
   round,
   teamPlayerIndices,
-  missionFailThreshold,
+  requiredFailCount,
   onResult,
 }: ResultFormProps) {
   const [failCount, setFailCount] = useState(0)
-  const success = failCount < missionFailThreshold
+  const success = failCount < requiredFailCount
   const teamNames = teamPlayerIndices.map((index) => players[index]?.name ?? '?')
 
   return (
@@ -263,8 +269,8 @@ function ResultForm({
           Round {round} — record mission result
         </h3>
         <p className="game-board__empty">
-          Team: {teamNames.join(', ')} — {missionFailThreshold} fail
-          {missionFailThreshold === 1 ? '' : 's'} to fail.
+          Team: {teamNames.join(', ')} — {requiredFailCount} fail
+          {requiredFailCount === 1 ? '' : 's'} to fail.
         </p>
         <div className="settings-panel__row">
           <label className="settings-panel__label" htmlFor="flow-fail-count">
@@ -374,7 +380,7 @@ export default function App() {
       missionResultEvents.map((event) => ({
         round: event.round,
         success:
-          event.failCount < getMissionFailThreshold(variant, players.length, event.round),
+          event.failCount < getRequiredFailCards(variant, players.length, event.round),
         failCount: event.failCount,
       })),
     [missionResultEvents, variant, players.length],
@@ -383,8 +389,13 @@ export default function App() {
   const currentRound = Math.min(missionResultEvents.length + 1, TOTAL_ROUNDS)
   const gameOver = missionResultEvents.length >= TOTAL_ROUNDS
 
-  const missionFailThreshold = useMemo(
-    () => getMissionFailThreshold(variant, players.length, currentRound),
+  const requiredFailCount = useMemo(
+    () => getRequiredFailCards(variant, players.length, currentRound),
+    [variant, players.length, currentRound],
+  )
+
+  const teamSize = useMemo(
+    () => getTeamSize(variant, players.length, currentRound),
     [variant, players.length, currentRound],
   )
 
@@ -452,8 +463,8 @@ export default function App() {
             round={currentRound}
             proposalNumber={proposalNumber}
             players={players}
-            missionFailThreshold={missionFailThreshold}
-            requiredFailCount={missionFailThreshold}
+            requiredFailCount={requiredFailCount}
+            teamSize={teamSize}
             voteHistory={voteHistory}
             missionResults={missionResults}
           />
@@ -472,6 +483,7 @@ export default function App() {
               players={players}
               round={currentRound}
               proposalNumber={proposalNumber}
+              teamSize={teamSize}
               onPropose={(leaderIndex, teamPlayerIndices) =>
                 pushEvent({
                   type: 'teamProposed',
@@ -505,7 +517,7 @@ export default function App() {
               teamPlayerIndices={
                 teamProposedEvents[teamProposedEvents.length - 1].teamPlayerIndices
               }
-              missionFailThreshold={missionFailThreshold}
+              requiredFailCount={requiredFailCount}
               onResult={(failCount) =>
                 pushEvent({
                   type: 'missionResult',

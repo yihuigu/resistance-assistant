@@ -18,8 +18,10 @@ export interface GameBoardProps {
   round: number
   proposalNumber: number
   players: Player[]
-  missionFailThreshold: number
+  /** Number of fail cards needed for the mission to fail. */
   requiredFailCount: number
+  /** Expected team size for the round. */
+  teamSize: number
   voteHistory: RoundVoteRecord[]
   missionResults: MissionResultRecord[]
 }
@@ -34,8 +36,8 @@ export function GameBoard({
   round,
   proposalNumber,
   players,
-  missionFailThreshold,
   requiredFailCount,
+  teamSize,
   voteHistory,
   missionResults,
 }: GameBoardProps) {
@@ -51,10 +53,9 @@ export function GameBoard({
             Proposal {proposalNumber}
           </span>
           <span className="game-board__threshold">
-            {missionFailThreshold} fail{missionFailThreshold === 1 ? '' : 's'}{' '}
-            to fail
+            Team of {teamSize}
           </span>
-          {requiredFailCount !== missionFailThreshold && (
+          {requiredFailCount > 1 && (
             <span className="game-board__threshold game-board__threshold--special">
               {requiredFailCount} fails required
             </span>
@@ -87,7 +88,7 @@ export function GameBoard({
                       ? 'Success'
                       : `Fail (${result.failCount} fail card${result.failCount === 1 ? '' : 's'})`
                     : roundNumber === round
-                      ? 'In progress'
+                      ? `In progress — Team of ${teamSize}`
                       : 'Pending'}
                 </span>
               </li>
