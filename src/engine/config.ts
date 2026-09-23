@@ -7,9 +7,9 @@ import type { EngineConfig, Variant } from './types'
  * - 5p:  [2, 3, 2, 3, 3]
  * - 6p:  [2, 3, 4, 3, 3]
  * - 7p:  [2, 3, 3, 4, 3]  (4th mission requires only 2 fails)
- * - 8p:  [2, 4, 3, 4, 3]  (4th mission requires only 2 fails)
- * - 9p:  [2, 4, 3, 4, 3]  (4th mission requires only 2 fails)
- * - 10p: [2, 4, 3, 4, 3]  (4th mission requires only 2 fails)
+ * - 8p:  [2, 3, 3, 4, 3]  (4th mission requires only 2 fails)
+ * - 9p:  [2, 3, 3, 4, 3]  (4th mission requires only 2 fails)
+ * - 10p: [2, 3, 3, 4, 3]  (4th mission requires only 2 fails)
  */
 const base: Variant = {
   spyCounts: { 5: 2, 6: 2, 7: 2, 8: 3, 9: 3, 10: 4 },
@@ -17,9 +17,9 @@ const base: Variant = {
     5: [2, 3, 2, 3, 3],
     6: [2, 3, 4, 3, 3],
     7: [2, 3, 3, 4, 3],
-    8: [2, 4, 3, 4, 3],
-    9: [2, 4, 3, 4, 3],
-    10: [2, 4, 3, 4, 3],
+    8: [2, 3, 3, 4, 3],
+    9: [2, 3, 3, 4, 3],
+    10: [2, 3, 3, 4, 3],
   },
 }
 
