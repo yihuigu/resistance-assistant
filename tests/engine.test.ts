@@ -93,7 +93,7 @@ describe('infer', () => {
 
 describe('enumerate', () => {
   it('enumeration counts match C(n,k) for n=5..10', () => {
-    const expected: Record<number, number> = { 5: 10, 6: 15, 7: 21, 8: 56, 9: 84, 10: 210 }
+    const expected: Record<number, number> = { 5: 10, 6: 15, 7: 35, 8: 56, 9: 84, 10: 210 }
     for (const n of [5, 6, 7, 8, 9, 10]) {
       const assignments = enumerateSpyAssignments(n, defaultConfig.variants.base)
       expect(assignments).toHaveLength(expected[n])

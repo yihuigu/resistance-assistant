@@ -48,15 +48,21 @@ export type GameEvent =
   | MissionResultEvent
   | SettingsEvent
 
-/** Spy counts per player count, and mission fail thresholds per round (1-indexed). */
+/** Spy counts, mission team sizes, and required fail cards per round (1-indexed). */
 export interface Variant {
   /** Maps player count (5-10) to the number of spies in that game. */
   spyCounts: Record<number, number>
   /**
-   * Maps player count (5-10) to the number of fail cards required for each
-   * mission to fail, indexed by round - 1 (length 5).
+   * Maps player count (5-10) to the mission team sizes per round,
+   * indexed by round - 1 (length 5).
    */
-  missionFailThresholds: Record<number, number[]>
+  teamSizes: Record<number, number[]>
+  /**
+   * Maps player count (5-10) to the number of fail cards required for each
+   * mission to fail, indexed by round - 1 (length 5). 1 for every mission,
+   * except round 4 in games of 7+ players, which requires 2.
+   */
+  requiredFailCards: Record<number, number[]>
 }
 
 export interface EngineConfig {

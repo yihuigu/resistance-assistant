@@ -10,7 +10,7 @@ A single-page web app where one host records game events and sees live posterior
 - Inference: Exact Bayesian enumeration over all possible spy assignments (max C(10,4)=210 assignments). Posterior computed as a pure fold over the full event list, so any event edit/undo recomputes from scratch (no incremental state).
 
 ## Event model
-1. Setup: player names (5-10), spy count + mission fail thresholds from a standard rules table (config data).
+1. Setup: player names (5-10), spy count + team sizes + required fail cards from a standard rules table (config data). Spies: 5p:2, 6p:2, 7p:3, 8p:3, 9p:3, 10p:4. Mission team sizes per round (1-5): 5p [2,3,2,3,3]; 6p [2,3,4,3,4]; 7p [2,3,3,4,4]; 8p [3,4,4,5,5]; 9p [3,4,4,5,5]; 10p [3,4,4,5,5]. Fail cards required for a mission to fail: 1 for every mission, except round 4 in games of 7+ players which requires 2 (5-6p [1,1,1,1,1]; 7-10p [1,1,1,2,1]).
 2. Round events: team proposal -> per-player approve/reject vote -> mission result (success/fail, count of fail cards).
 3. Out of scope: plot cards, multi-device sync, Avalon UI.
 
