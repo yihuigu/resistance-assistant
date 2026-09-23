@@ -99,14 +99,3 @@ export function getRequiredFailCards(
   return required[round - 1]
 }
 
-/**
- * @deprecated Use getRequiredFailCards instead. Kept temporarily until
- * consumers (App.tsx/GameBoard.tsx) are migrated.
- */
-export function getMissionFailThreshold(
-  variant: Variant,
-  playerCount: number,
-  round: number,
-): number {
-  return getRequiredFailCards(variant, playerCount, round)
-}
