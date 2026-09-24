@@ -390,12 +390,16 @@ export default function App() {
   const gameOver = missionResultEvents.length >= TOTAL_ROUNDS
 
   const requiredFailCount = useMemo(
-    () => getRequiredFailCards(variant, players.length, currentRound),
+    () =>
+      players.length > 0
+        ? getRequiredFailCards(variant, players.length, currentRound)
+        : 0,
     [variant, players.length, currentRound],
   )
 
   const teamSize = useMemo(
-    () => getTeamSize(variant, players.length, currentRound),
+    () =>
+      players.length > 0 ? getTeamSize(variant, players.length, currentRound) : 0,
     [variant, players.length, currentRound],
   )
 
